@@ -17,6 +17,43 @@ from matplotlib import rc
 df1=pd.read_csv('src/dbf.csv')
 df1.head()
 
+plt.figure(figsize=(7,5))
+chart=sns.countplot(df1.Sentiment,palette='Set1')
+plt.title('Overview of the data')
+chart.set_xticklabels(chart.get_xticklabels(), rotation=45,horizontalalignment='right') 
+#plt.savefig('data.png')
+df1=df1.sample(frac=1)
+df1.groupby('Sentiment').count()
+
+from nltk.corpus import stopwords
+from nltk import word_tokenize 
+stop_words = stopwords.words('english')
+# I'm aadding cusom list of words to be removed
+add_words = [',','``',',,','.','&']
+stop_words.extend(add_words)
+
+#removing stop words
+def remove_stopwords(rev):
+    review_tokenized = word_tokenize(rev)
+    rev_new = " ".join([i for i in review_tokenized if i not in stop_words]) 
+    return rev_new
+    #adding a new column for the processed data
+df1['review_processed'] = [remove_stopwords(r) for r in df1['Sentence']]
+df1.groupby('Sentiment').count()
+  
+#for positive and 2 for negative. 
+def assign_values(value):
+    if value=="positive": 
+        return 1
+    elif value=="neutral": 
+        return 0
+    else:
+        return 2 #else data the sentntiment is negative
+df1['label'] = df1['Sentiment'].apply(assign_values)
+#checking to see if my data is processed
+df1.head()
+# we're good to go now
+df1.groupby('Sentiment').count()
 #algo for the favoured statistical probability  
 class probabilty_calc:
     def nbt(self, x):
