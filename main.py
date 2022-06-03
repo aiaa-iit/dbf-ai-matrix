@@ -88,3 +88,21 @@ class probabilty_calc:
             self._mean[i, :] = s_i.mean(axis=0) 
             self._variance[i, :] =s_i.var(axis=0) 
             self._prs[i] = s_i.shape[0] / float(sam)
+
+#splitting data for training and predicting of Naive bayes probability.
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import CountVectorizer
+x = df1['review_processed']
+y = df1['label']
+#i choose 30 - 70 split with a random state of 30
+x, x_test, y, y_test = train_test_split(x,y, stratify=y, test_size=0.3,random_state=30)
+
+# define our vectorisation feature.
+vec = CountVectorizer(stop_words='english')
+x = vec.fit_transform(x).toarray()
+x_test = vec.transform(x_test).toarray()
+
+#define a functionn to get the accuracy interms of flaot number
+def class_accuracy(y_true, y_pred):
+        accuracy = np.sum(y_true == y_pred) / len(y_true) 
+        return accuracy
